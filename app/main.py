@@ -1,4 +1,6 @@
+import os
 from datetime import date
+from pathlib import Path
 
 from flask import Flask, redirect, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -8,9 +10,15 @@ app = Flask(
     template_folder="../templates",
     static_folder="../static",
 )
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///expenses.db"
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+else:
+    database_path = Path("/tmp/expensepilot.db" if os.environ.get("VERCEL") else "instance/expenses.db")
+    database_path.parent.mkdir(parents=True, exist_ok=True)
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{database_path.resolve()}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SECRET_KEY"] = "expensepilot-secret"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "expensepilot-local-secret")
 
 db = SQLAlchemy(app)
 

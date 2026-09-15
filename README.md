@@ -99,10 +99,10 @@ A successful response returns HTTP `200 OK`.
 
 The project plan targets Vercel for deployment. Before production deployment:
 
-1. Add a production WSGI/serverless entry point compatible with the selected Vercel setup.
-2. Replace local SQLite with a hosted database if persistent multi-user data is required.
-3. Configure environment variables for production settings.
-4. Add automated tests and a deployment configuration.
+1. Set `DATABASE_URL` to a production database connection string in Vercel if data must persist between function invocations.
+2. Set `SECRET_KEY` in the Vercel project environment variables.
+3. Without `DATABASE_URL`, Vercel uses a writable `/tmp` SQLite database for basic operation; this storage is temporary and can be reset between deployments or function instances.
+4. Add automated tests and a deployment configuration as the application grows.
 5. Deploy with the Vercel CLI or connect the GitHub repository in the Vercel dashboard.
 
 ## Repository
